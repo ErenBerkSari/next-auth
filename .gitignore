@@ -1,0 +1,39 @@
+# ✅ Node.js bağımlılıkları
+node_modules/
+
+# ✅ Yarn / pnpm / npm cache
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ✅ Yarn 2+ (PnP) özel dosyalar
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ✅ Test ve coverage dosyaları
+coverage/
+
+# ✅ Next.js build klasörleri
+.next/
+out/
+build/
+
+# ✅ Sistem dosyaları
+.DS_Store
+*.pem
+
+# ✅ Env dosyaları (gizli anahtarlar içerdiği için asla versiyona girmez)
+.env*
+!env.example
+
+# ✅ Vercel deploy ayarları
+.vercel/
+
+# ✅ TypeScript geçici dosyaları
+*.tsbuildinfo
+next-env.d.ts
