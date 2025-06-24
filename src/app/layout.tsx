@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/[...nextAuth]/route";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 import Providers from "@/components/Providers";
 import Auth0Provider from "next-auth/providers/auth0";
 
