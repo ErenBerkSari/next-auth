@@ -23,7 +23,11 @@ export default function Navigation() {
             >
               Profil
             </Link>
-            
+            {Array.isArray(session.user?.role) && session.user.role.includes('admin') && (
+              <Link className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition font-medium shadow-sm" href="/admin">
+                Admin Panel
+              </Link>
+            )}
             <Link
               className="px-4 py-2 rounded bg-red-500 text-white font-medium hover:bg-red-700 transition shadow-sm"
               href="/api/auth/signout"
