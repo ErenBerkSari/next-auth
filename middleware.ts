@@ -1,22 +1,21 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { ServiceContainer } from './src/services/ServiceContainer';
 
 export async function middleware(request: NextRequest) {
-  const protectedPaths = ['/profile'];
-  const { pathname } = request.nextUrl;
-
-  if (protectedPaths.some((path) => pathname.startsWith(path))) {
-    const token = await getToken({ req: request, secret: process.env.AUTH0_SECRET });
-    if (!token) {
-      const loginUrl = new URL('/api/auth/signin?callbackUrl=' + encodeURIComponent(request.url), request.url);
-      return NextResponse.redirect(loginUrl);
-    }
+  const serviceContainer = ServiceContainer.getInstance();
+  const middlewareService = serviceContainer.getMiddlewareService();
+  
+  // Use the service layer to protect routes
+  const response = await middlewareService.protectRoute(request);
+  
+  if (response) {
+    return response;
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/profile'],
+  matcher: ['/profile', '/admin'],
 };

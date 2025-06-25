@@ -1,21 +1,23 @@
 "use client";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useAuth } from '../hooks/useAuth';
+import { useAuthorization } from '../hooks/useAuthorization';
 
 export default function AdminDashboard() {
-  const { data: session, status } = useSession();
+  const { session, isAuthenticated, isLoading } = useAuth();
+  const { isAdmin } = useAuthorization();
   const router = useRouter();
 
   useEffect(() => {
-    if (status === "unauthenticated") {
+    if (!isLoading && !isAuthenticated) {
       router.push("/api/auth/signin");
-    } else if (status === "authenticated" && (!Array.isArray(session?.user?.role) || !session.user.role.includes("admin"))) {
+    } else if (!isLoading && isAuthenticated && !isAdmin) {
       router.push("/");
     }
-  }, [status, session, router]);
+  }, [isLoading, isAuthenticated, isAdmin, router]);
 
-  if (status === "loading") {
+  if (isLoading) {
     return (
       <div className="flex flex-col items-center gap-4">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -24,7 +26,7 @@ export default function AdminDashboard() {
     );
   }
 
-  if (!session || !Array.isArray(session.user?.role) || !session.user.role.includes("admin")) {
+  if (!isAuthenticated || !isAdmin) {
     return (
       <div className="flex flex-col items-center gap-4">
         <h1 className="text-2xl font-bold text-red-600">Erişim Reddedildi</h1>
@@ -46,10 +48,10 @@ export default function AdminDashboard() {
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Hoşgeldin, {session.user?.name}!
+            Hoşgeldin, {session?.user?.name}!
           </h2>
           <p className="text-gray-600">
-            Rol: <span className="font-semibold text-blue-600">{Array.isArray(session.user?.role) ? session.user.role.join(', ') : session.user?.role}</span>
+            Rol: <span className="font-semibold text-blue-600">{Array.isArray(session?.user?.role) ? session.user.role.join(', ') : session?.user?.role}</span>
           </p>
         </div>
 
