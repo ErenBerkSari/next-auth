@@ -22,6 +22,10 @@ export const authOptions: NextAuthOptions = {
         token.name = profile.name;
         token.email = profile.email;
         token.picture = profile.picture;
+         // Auth0'dan gelen rol bilgisini ekle - farklı namespace formatlarını dene
+         token.role = profile['https://kayra-app.com/roles'] || 
+         profile['https://kayra-app.com/roles'] ||
+         profile.roles?.[0] || 'user';
       }
       return token;
     },
@@ -29,6 +33,8 @@ export const authOptions: NextAuthOptions = {
       // JWT'den session'a bilgileri aktar
       session.accessToken = token.accessToken;
       session.user.id = token.sub;
+      session.user.role = token.role;
+
       return session;
     },
   },
