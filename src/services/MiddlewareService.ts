@@ -10,41 +10,51 @@ export class MiddlewareService implements IMiddlewareService, IRouteGuard {
   ]);
 
   async protectRoute(request: NextRequest, allowedRoles?: string[]): Promise<NextResponse | null> {
-    const { pathname } = request.nextUrl;
-    
-    if (!this.isProtectedPath(pathname)) {
-      return null; // Not a protected path, allow access
-    }
-
-    const token = await getToken({ 
-      req: request, 
-      secret: process.env.AUTH0_SECRET 
-    });
-
-    if (!token) {
+    try {
+      const { pathname } = request.nextUrl;
+      
+      if (!this.isProtectedPath(pathname)) {
+        return null; // Not a protected path, allow access
+      }
+  
+      const token = await getToken({ 
+        req: request, 
+        secret: process.env.AUTH0_SECRET 
+      });
+  
+      if (!token) {
+        const loginUrl = new URL('/api/auth/signin?callbackUrl=' + encodeURIComponent(request.url), request.url);
+        return NextResponse.redirect(loginUrl);
+      }
+  
+      // Check role-based access if roles are specified
+      if (allowedRoles && token.role) {
+        const userRoles = Array.isArray(token.role) ? token.role : [token.role];
+        const hasRequiredRole = allowedRoles.some(role => userRoles.includes(role));
+        
+        if (!hasRequiredRole) {
+          return NextResponse.redirect(new URL('/unauthorized', request.url));
+        }
+      }
+  
+      return null; // Allow access
+    } catch (err) {
+      // Hata durumunda signin'e yönlendir
       const loginUrl = new URL('/api/auth/signin?callbackUrl=' + encodeURIComponent(request.url), request.url);
       return NextResponse.redirect(loginUrl);
     }
-
-    // Check role-based access if roles are specified
-    if (allowedRoles && token.role) {
-      const userRoles = Array.isArray(token.role) ? token.role : [token.role];
-      const hasRequiredRole = allowedRoles.some(role => userRoles.includes(role));
-      
-      if (!hasRequiredRole) {
-        return NextResponse.redirect(new URL('/unauthorized', request.url));
-      }
-    }
-
-    return null; // Allow access
   }
 
   async validateRequest(request: NextRequest): Promise<boolean> {
-    const token = await getToken({ 
-      req: request, 
-      secret: process.env.AUTH0_SECRET 
-    });
-    return !!token;
+    try {
+      const token = await getToken({ 
+        req: request, 
+        secret: process.env.AUTH0_SECRET 
+      });
+      return !!token;
+    } catch (err) {
+      return false;
+    }
   }
 
   getProtectedPaths(): string[] {

@@ -28,11 +28,31 @@ export class LoggerService implements ILoggerService, IErrorHandler {
       context: context || {},
     };
 
-    if (this.isDevelopment) {
-      console.log(`[${timestamp}] ${level.toUpperCase()}: ${message}`, context || '');
-    } else {
-      // In production, you might want to send logs to a service like CloudWatch, Loggly, etc.
-      console.log(JSON.stringify(logEntry));
+    try {
+      if (this.isDevelopment) {
+        try {
+          console.log(`[${timestamp}] ${level.toUpperCase()}: ${message}`, context || '');
+        } catch (err) {
+          // Handle console.log error in development
+          try {
+            console.error('LoggerService development log error:', err);
+          } catch {}
+        }
+      } else {
+        try {
+          console.log(JSON.stringify(logEntry));
+        } catch (err) {
+          // Handle JSON.stringify or console.log error in production
+          try {
+            console.error('LoggerService production log error:', err);
+          } catch {}
+        }
+      }
+    } catch (err) {
+      // Catch-all for any unexpected error
+      try {
+        console.error('LoggerService unexpected log error:', err);
+      } catch {}
     }
   }
 

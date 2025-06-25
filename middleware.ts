@@ -7,10 +7,14 @@ export async function middleware(request: NextRequest) {
   const middlewareService = serviceContainer.getMiddlewareService();
   
   // Use the service layer to protect routes
-  const response = await middlewareService.protectRoute(request);
-  
-  if (response) {
-    return response;
+  try {
+    const response = await middlewareService.protectRoute(request);
+    if (response) {
+      return response;
+    }
+  } catch (err) {
+    // Hata durumunda erişime izin ver (veya loglanabilir)
+    return NextResponse.next();
   }
 
   return NextResponse.next();
