@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   if (protectedPaths.some((path) => pathname.startsWith(path))) {
     const token = await getToken({ req: request, secret: process.env.AUTH0_SECRET });
     if (!token) {
-      const loginUrl = new URL('/api/auth/signin', request.url);
+      const loginUrl = new URL('/api/auth/signin?callbackUrl=' + encodeURIComponent(request.url), request.url);
       return NextResponse.redirect(loginUrl);
     }
   }
