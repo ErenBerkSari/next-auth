@@ -31,14 +31,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-100 min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-gray-100 via-blue-50 to-blue-100 min-h-screen`}
       >
         <Providers session={session}>
           <Navigation />
           <main className="flex justify-center items-center min-h-[80vh]">
-            <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-xl">
-              {children}
-            </div>
+            {children}
           </main>
         </Providers>
       </body>

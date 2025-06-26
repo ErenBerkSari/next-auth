@@ -42,7 +42,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-6 mt-5">
       <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
       
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
+        <div className="mt-8 pt-6 border-t border-gray-200 flex justify-center">
           <button
             onClick={() => router.push("/")}
             className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition"
